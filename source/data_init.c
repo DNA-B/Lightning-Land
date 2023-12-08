@@ -35,12 +35,14 @@ struct Data* data_init() {
 				item[idx].is_selled = atoi(token);
 			}
 			else if (i == 4) {
-				item[idx].is_trade = atoi(token);
+				item[idx].is_trading = atoi(token);
 			}
 			i++;
 			token = strtok(NULL, " ");
 		}
-		idx++;
+		
+		item[idx].idx = idx++;
+		item[idx].cur_ppid = -1;
 	}
 
 	fclose(fp);
