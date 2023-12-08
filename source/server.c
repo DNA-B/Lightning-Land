@@ -12,15 +12,18 @@
 
 #define SOCKET_NAME "trade"
 
+struct Data* item = data_init();
 int exit_cnt = 0, item_idx, semid;
 char buf[BUFSIZ];
 
 void send_msg(int nsd, char* msg) {	
 	strcpy(buf, msg);
+	
 	if(send(nsd, buf, strlen(buf) + 1, 0) == -1) {
 		perror("send");
 		exit(1);
 	}
+	
 	sleep(1);
 }
 
@@ -44,12 +47,10 @@ void select_item(int nsd) {
 
 int re_trade(int nsd) {
 	send_msg(nsd, "해당 물건이 이미 판매되었습니다.\n다른 물건을 선택하시겠습니까? [Y/N]");
-	sleep(1);
 	send_msg(nsd, "1");
-	sleep(1);
 	receive_msg(nsd);
-	sleep(1);
-				
+	sleep(0.5);
+	
 	if(strcmp(buf, "y") == 0 || strcmp(buf, "Y")) {
 		select_item(nsd);
 		return 1;
@@ -66,7 +67,6 @@ int main()
 {
 	struct sockaddr_un ser, cli;
 	int sd, nsd, len, clen, item_idx;
-	struct Data* item = data_init();
 
 	printf("** Data Init Complete **\n");
 	 
@@ -104,8 +104,10 @@ int main()
 		}
 	
 	
-		if((semid = initsem(1)) < 0)
+		/* 세마포어 초기화 (일단 사용 X)
+  		if((semid = initsem(1)) < 0)
 			exit(1);
+		*/
 		
 		select_item(nsd);
 		
