@@ -12,7 +12,6 @@
 
 #define SOCKET_NAME "trade"
 
-struct Data* item = data_init();
 int exit_cnt = 0, item_idx, semid;
 char buf[BUFSIZ];
 
@@ -65,6 +64,7 @@ int re_trade(int nsd) {
 
 int main() 
 {
+	struct Data* item = data_init();
 	struct sockaddr_un ser, cli;
 	int sd, nsd, len, clen, item_idx;
 
