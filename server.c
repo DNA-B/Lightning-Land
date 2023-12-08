@@ -5,34 +5,19 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include "data_init.h"
+#include "sem.h"
 
 #define SOCKET_NAME "trade"
-
-extern int initsem(key_t semkey);
-extern int semlock(int semid);
-extern int semunlock(int semid);
-extern struct data* data_init();
-
-struct data {
-	char name[20];
-	int price;
-	int min_price;
-	int is_selled;
-	int is_trade;
-};
-
-struct data item[10];
 
 int main() 
 {
 	struct sockaddr_un ser, cli;
 	int sd, nsd, len, clen, semid;
 	char buf[BUFSIZ];
-	
-	item = data_init();
-	
-	for (int i = 0; i < 7; i++)
-		printf("%s\n", item[i].name);
+	struct Data* item = data_init();
+
+	printf("** Data Init Complete **\n");
 	
 	unlink(SOCKET_NAME); // 서버 재실행시 오류를 방지하기 위해 만들어둔 소켓 삭제	
 		
@@ -41,7 +26,7 @@ int main()
 		exit(1);
  	}
 
- 	printf("** Create Socket\n");
+ 	printf("** Create Socket ** \n");
 
 	memset((char *)&ser, '\0', sizeof(struct sockaddr_un));
 	ser.sun_family = AF_UNIX;
