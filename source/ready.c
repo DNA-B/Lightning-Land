@@ -21,13 +21,11 @@ void send_msg(int nsd, char* msg) {
 	sleep(1);
 }
 
-char* receive_msg(int nsd) {
+void receive_msg(int nsd) {
 	if(recv(nsd, buf, sizeof(buf), 0) == -1) {
 		perror("recv");
 		exit(1);
 	}
-	
-	return buf;
 }
 
 void select_item(int nsd) {
@@ -35,7 +33,7 @@ void select_item(int nsd) {
 	send_msg(nsd, "구매하실 물건을 선택해주세요.");
 	send_msg(nsd, "[ 0.카메라 | 1.자켓 | 2.이어폰 | 3.안경 | 4.책 | 5.가방 | 6.머리끈 ]");
 	send_msg(nsd, "1"); // 1번은 입력 요청
-	strcpy(buf, receive_msg(nsd)); // client 선택 받기
+	receive_msg(nsd); // client 선택 받기
 	
 	item_idx = atoi(buf); // 물건 번호 저장
 	printf("사용자(%d)가 %s번을 선택하였습니다.\n", getpid(), buf);
@@ -44,7 +42,7 @@ void select_item(int nsd) {
 int re_trade(int nsd) {
 	send_msg(nsd, "해당 물건이 이미 판매되었습니다.\n다른 물건을 선택하시겠습니까? [Y/N]");
 	send_msg(nsd, "1"); // 1번은 입력 요청
-	strcpy(buf, receive_msg(nsd)); // client 선택 받기
+	receive_msg(nsd); // client 선택 받기
 	
 	if(strcmp(buf, "y") == 0 || strcmp(buf, "Y")) { // 다시 입력하겠다고 했다면 item 재선택
 		select_item(nsd);
