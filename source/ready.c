@@ -6,13 +6,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include "ready.h"
 #include "data_init.h"
-
 // #include "trade.h" 형이 만들고나면 // 없애주시면 되요
 
-int item_idx;
-char buf[BUFSIZ];
-	
 void send_msg(int nsd, char* msg) {	
 	strcpy(buf, msg);
 	
