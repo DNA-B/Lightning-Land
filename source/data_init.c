@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include "data_init.h"
 
 struct Data* data_init() {
 	FILE *fp = fopen("LL_data.txt", "r");	
