@@ -7,7 +7,6 @@
 
 struct Data* data_init() {
 	FILE *fp = fopen("LL_data.txt", "r");	
-	struct Data* item = (struct Data*)malloc(10 * sizeof(struct Data));
 	
 	if (fp == NULL) {
 		printf("거래 정보가 없습니다.");
@@ -15,7 +14,7 @@ struct Data* data_init() {
 	}
 	
 	char buffer[1001], *token;
-
+	struct Data* item = (struct Data*)malloc(10 * sizeof(struct Data));
 	int i = 0;
 	int idx = 0;
 	
