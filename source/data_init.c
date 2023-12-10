@@ -1,8 +1,9 @@
+#include <unistd.h>
+#include <sys/types.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "data_init.h"
-	
+
 struct Data* data_init() {
 	FILE *fp = fopen("LL_data.txt", "r");	
 	struct Data* item = (struct Data*)malloc(10 * sizeof(struct Data));
@@ -46,5 +47,7 @@ struct Data* data_init() {
 	}
 
 	fclose(fp);
+	printf("** pid(%d) - Data Init Complete **\n", getpid());
+	
 	return item;
 }
