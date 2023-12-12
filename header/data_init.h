@@ -1,16 +1,15 @@
  #ifndef _DATA_INIT_H
  #define _DATA_INIT_H
 
-struct Data {
-	char name[20];
-	int idx;
-	int price;
-	int min_price;
+typedef struct Data {
+	char name[32];
+	char price[32];
+	char min_price[32];
 	int is_selled;
 	int is_trading;
-	pid_t cur_ppid;
-};
+	int idx;
+} Data;
 
-struct Data* data_init();
+void data_init(Data* item);
 
  #endif
