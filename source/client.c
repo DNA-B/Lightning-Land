@@ -47,7 +47,7 @@ int main() {
 		receive_msg(sd);
 		
 		if(strcmp(buf, "1") == 0) {
-			printf("Select item : ");
+			printf(">> Select item : ");
 			scanf("%s", buf);
 			send_msg(sd, buf);
 		}
@@ -55,10 +55,9 @@ int main() {
 			break;
 		}
 		else {
-			printf("%s\n", buf);
+			printf("%s", buf);
 		}
 	}
 	
 	close(sd);
 }
-
