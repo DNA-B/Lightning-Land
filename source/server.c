@@ -34,6 +34,7 @@ int* exit_cnt; // 모든 물건이 판매되면 server 종료
 
 void exit_func(int nsd) {
 	data_save(item); // 거래 종료 후의 구조체를 LL_after_data.txt에 저장
+	printf("***** 물건이 모두 판매되었습니다 *****\n");
 	printf("***** Data save complete *****\n");
 	
 	shmdt(item); // 공유 메모리에서 detach
@@ -160,8 +161,6 @@ void trade(int nsd) {
 
 		if(*exit_cnt >= 3) // 만약 물건이 모두 팔렸다면 서버 종료 (테스트를 위해 현재 3으로 지정)
 			exit_func(nsd);
-		
-		return;
 	}
 	else {
 		send_msg(nsd, "\n\n😞  저희가 생각한 가격과 큰 차이가 있어 거래할 수 없을 것 같습니다 😞\n");
@@ -181,10 +180,10 @@ int main() {
 	key_t key1, key2;
 	int sd, nsd, len, clen;
 	
-	key1 = ftok("data_shmfile", 1); 
-	key2 = ftok("exit_cnt_shmfile", 2);
-	shmid1 = shmget(key1, sizeof(Data) * 10, IPC_CREAT | 0644);
-	shmid2 = shmget(key2, sizeof(int), IPC_CREAT | 0644);
+	key1 = ftok("exit_cnt_shmfile", 100); // exit_cnt 공유메모리 key
+	key2 = ftok("data_shmfile", 200);  // data 공유메모리 key
+	shmid1 = shmget(key1, sizeof(int) * 1, IPC_CREAT | 0644); // exit_cnt 공유메모리 id
+	shmid2 = shmget(key2, sizeof(Data) * 10, IPC_CREAT | 0644); // item 공유메모리 id
 	
 	if (shmid1 == -1) {
 		perror("shmget");
@@ -196,10 +195,10 @@ int main() {
 		exit(1);
 	}
 
-	item = (Data*) shmat(shmid1, NULL, 0); // 구조체를 공유 메모리에 attach
-	data_init(item); // 구조체 초기화
-	exit_cnt = (int *) shmat(shmid2, NULL, 0); // 종료 카운트 attach
+	exit_cnt = (int *) shmat(shmid1, NULL, 0); // 종료 카운트 attach
 	*exit_cnt = 0; // 종료 카운트 초기화
+	item = (Data*) shmat(shmid2, NULL, 0); // 구조체를 공유 메모리에 attach
+	data_init(item); // 구조체 초기화
 	
 	unlink(SOCKET_NAME); // 서버 재실행시 오류를 방지하기 위해 만들어둔 소켓 삭제	
 		
@@ -236,8 +235,8 @@ int main() {
 				perror("fork");
 				exit(1);
 			case 0:
-				item = (Data*) shmat(shmid1, NULL, 0); // 구조체를 공유 메모리에 attach
-				exit_cnt = (int *) shmat(shmid2, NULL, 0);
+				exit_cnt = (int *) shmat(shmid1, NULL, 0);
+				item = (Data*) shmat(shmid2, NULL, 0); // 구조체를 공유 메모리에 attach
 				send_msg(nsd, "⚡  번개나라에 오신 것을 환영합니다. ⚡");
 				select_item(nsd); // 사용자 물건 입력 받기
 				trade_or_exit(nsd); // 거래가 가능한지 아닌지 확인
