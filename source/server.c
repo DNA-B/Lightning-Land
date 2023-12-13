@@ -8,11 +8,14 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <signal.h>
 #include "data_init.h"
+#include "data_save.h"
 
 #define SOCKET_NAME "trade"
 #define DELAY 1500000
 
+void exit_func(int nsd);
 void send_msg(int nsd, char* msg); // client에게 메세지 전송
 void receive_msg(int nsd); // client의 입력 대기 
 void select_item(int nsd); // client에게 아이템 선택 요청 
@@ -22,9 +25,27 @@ int re_trade(int nsd); // 거래가 불가능할 때, 다시 선택할 것인지
 void trade(int nsd); // 실제 거래가 이루어지는 함수
 
 
+char buf[BUFSIZ]; // send, receive에 사용하는 버퍼
+int shmid1, shmid2; // 공유 메모리 id (각각 item, exit_cnt)
 Data* item; // 판매 물건 정보를 담고있는 구조체 
 int item_idx; // 사용자가 선택한 물건
-char buf[BUFSIZ]; // send, receive에 사용하는 버퍼
+int* exit_cnt; // 모든 물건이 판매되면 server 종료
+
+
+void exit_func(int nsd) {
+	data_save(item); // 거래 종료 후의 구조체를 LL_after_data.txt에 저장
+	printf("***** Data save complete *****\n");
+	
+	shmdt(item); // 공유 메모리에서 detach
+	shmdt(exit_cnt);
+	shmctl(shmid1, IPC_RMID, (struct shmid_ds *) NULL); // 공유메모리 삭제
+	shmctl(shmid2, IPC_RMID, (struct shmid_ds *) NULL); 
+	close(nsd);
+	
+	printf("***** System Exit *****\n\n");
+	kill(getppid(), SIGQUIT); // 부모 프로세스 kill
+	exit(1); // 자식프로세스 종료
+}
 
 
 void send_msg(int nsd, char* msg) {
@@ -48,13 +69,20 @@ void receive_msg(int nsd) {
 
 
 void select_item(int nsd) {
-	send_msg(nsd, "▶  구매하실 물건을 선택해주세요 ◀\n");
+	send_msg(nsd, "\n\n▶  구매하실 물건을 선택해주세요 ◀\n");
 	send_msg(nsd, "[ 0.카메라 | 1.자켓 | 2.이어폰 | 3.안경 | 4.책 | 5.가방 | 6.머리끈 ]\n");
 	send_msg(nsd, "1"); // 1번은 입력 받기
 	receive_msg(nsd); // client 선택 받기
 	
+	
+	while (atoi(buf) < 0 || atoi(buf) > 6) {
+		send_msg(nsd, "\n\n잘못 입력하셨습니다. 다시 선택해주세요.\n");
+		send_msg(nsd, "1");
+		receive_msg(nsd);
+	}
+
 	item_idx = atoi(buf); // 물건 번호 저장
-	printf("log : %d 사용자가 %s번을 선택하였습니다.\n", getpid(), buf);
+	printf("log : %d 프로세스의 사용자가 %s번(%s)을 선택하였습니다.\n", getpid(), buf, item[item_idx].name);
 }
 
 
@@ -63,7 +91,7 @@ void trade_or_exit(int nsd) {
 		wait_trade(nsd);	
 	
 	if(item[item_idx].is_selled) { // 물건이 이미 팔렸다면
-		send_msg(nsd, "⚠  해당 물건이 이미 판매되었습니다 ⚠\n");
+		send_msg(nsd, "\n\n⚠  해당 물건이 이미 판매되었습니다 ⚠\n");
 		sleep(2);
 		
 		if(re_trade(nsd)) // 다시 선택하거나 프로그램 종료
@@ -73,7 +101,6 @@ void trade_or_exit(int nsd) {
 	}	
 	else { // 선택한 물건이 팔리지 않았으면		
 		item[item_idx].is_trading = 1; // 거래중 여부 변수를 true로 갱신
-		send_msg(nsd, "\n\n\n\n\n\n");
 		trade(nsd); // 거래 함수 시작
 	}	
 }
@@ -81,27 +108,25 @@ void trade_or_exit(int nsd) {
 
 void wait_trade(int nsd) {
 	while(item[item_idx].is_trading) { // 선택한 물건이 거래중인 경우 대기
-		send_msg(nsd, "다른 사용자가 거래중입니다\n");
-		sleep(2);
-		send_msg(nsd, ".......................\n");
-		sleep(2);
+		send_msg(nsd, "\n다른 사용자가 거래중입니다\n");
+		sleep(1);
+		send_msg(nsd, "\n.......................\n");
+		sleep(1);
 	}			
 }
 
 
 int re_trade(int nsd) {
-	send_msg(nsd, "\n\n\n\n\n\n"); 
-	send_msg(nsd, "▶  다른 물건을 선택하시겠습니까? [Y / N] ◀\n");
+	send_msg(nsd, "\n\n▶  다른 물건을 선택하시겠습니까? [Y / N] ◀\n");
 	send_msg(nsd, "1"); // 1번은 입력 요청
 	receive_msg(nsd); // client 선택 받기
 	
 	if(strcmp(buf, "y") == 0 || strcmp(buf, "Y") == 0) { // 다시 입력하겠다고 했다면 item 재선택
-		send_msg(nsd, "\n\n\n\n\n\n"); 
 		select_item(nsd); // 물건 재선택
 		return 1;
 	}
 	else if(strcmp(buf, "n") == 0 || strcmp(buf, "N") == 0) { // 입력하지 않겠다면 프로그램 종료
-		send_msg(nsd, "\n\n⚡  저희 번개나라를 이용해주셔서 감사합니다 ⚡\n\n");
+		send_msg(nsd, "\n\n⚡  저희 번개나라를 이용해주셔서 감사합니다 ⚡\n");
 		send_msg(nsd, "2"); // 2번은 프로그램 종료
 		return 0;
 	}
@@ -111,10 +136,10 @@ int re_trade(int nsd) {
 void trade(int nsd) {
 	int given_price; // 사용자가 제시한 가격 저장 변수
 	
-	sprintf(buf, "💱  거래를 시작합니다 [ %s의 가격 : %s ] 💱", item[item_idx].name, item[item_idx].price);
+	sprintf(buf, "\n\n💱  거래를 시작합니다 [ %s의 가격 : %s ] 💱", item[item_idx].name, item[item_idx].price);
 	
 	send_msg(nsd, buf);
-	send_msg(nsd, "\n▶  희망하는 구매 가격을 제시해주세요 (물건 가격 이하의 금액 입력) ◀\n");
+	send_msg(nsd, "\n\n▶  희망하는 구매 가격을 제시해주세요 (물건 가격 이하의 금액 입력) ◀\n");
 	send_msg(nsd, "1"); // 1은 입력 요청
 	receive_msg(nsd);
 	given_price = atoi(buf); // 입력값 저장
@@ -124,44 +149,57 @@ void trade(int nsd) {
 	if (atoi(item[item_idx].min_price) <= given_price && given_price <= atoi(item[item_idx].price)) { // 고객이 제시한 금액이 price와 min_price의 사이라면 물건 판매
 		send_msg(nsd, "\n\n🤑  합리적인 가격인 것 같네요! 물건을 판매하겠습니다 🤑\n");
 		sleep(2);
-		send_msg(nsd, "\n\n⚡  저희 번개나라를 이용해주셔서 감사합니다 ⚡\n\n");
+		send_msg(nsd, "\n\n⚡  저희 번개나라를 이용해주셔서 감사합니다 ⚡\n");
 		send_msg(nsd, "2"); // client 프로그램 종료
 		
 		item[item_idx].is_selled = 1; // 해당 물건의 판매 여부를 true로 갱신
 		item[item_idx].is_trading = 0; // 거래 중 여부 false로 갱신
-		printf("log : %d 사용자가 물건을 구매하였습니다.\n", getpid());
+		*exit_cnt += 1;
+		
+		printf("log : %d 프로세스의 사용자가 %s을(를) 구매하였습니다.\n", getpid(), item[item_idx].name);
+
+		if(*exit_cnt >= 3) // 만약 물건이 모두 팔렸다면 서버 종료 (테스트를 위해 현재 3으로 지정)
+			exit_func(nsd);
+		
 		return;
 	}
 	else {
 		send_msg(nsd, "\n\n😞  저희가 생각한 가격과 큰 차이가 있어 거래할 수 없을 것 같습니다 😞\n");
+		item[item_idx].is_trading = 0;
 		sleep(2);
 		
 		if(re_trade(nsd)) // 다시 선택하거나 프로그램 종료
 			trade_or_exit(nsd);
 		else
 			return;
-	}
-		
+	}	
 }
 
 
 int main() { 
 	struct sockaddr_un ser, cli;
-	key_t key;
-	int sd, nsd, len, clen, shmid;
-	int exit_cnt = 0; // server 무한 반복 종료를 위한 count -> 물건이 다 팔리면 종료
+	key_t key1, key2;
+	int sd, nsd, len, clen;
 	
-	key = ftok("shmfile", 1); 
-	shmid = shmget(key, sizeof(Data) * 10, IPC_CREAT | 0644);
-
-	if (shmid == -1) {
+	key1 = ftok("data_shmfile", 1); 
+	key2 = ftok("exit_cnt_shmfile", 2);
+	shmid1 = shmget(key1, sizeof(Data) * 10, IPC_CREAT | 0644);
+	shmid2 = shmget(key2, sizeof(int), IPC_CREAT | 0644);
+	
+	if (shmid1 == -1) {
+		perror("shmget");
+		exit(1);
+	}
+	
+	if(shmid2 == -1) {
 		perror("shmget");
 		exit(1);
 	}
 
-	item = (Data*) shmat(shmid, NULL, 0); // 구조체를 공유 메모리에 attach
+	item = (Data*) shmat(shmid1, NULL, 0); // 구조체를 공유 메모리에 attach
 	data_init(item); // 구조체 초기화
-	shmdt(item); // 공유 메모리에서 detach
+	exit_cnt = (int *) shmat(shmid2, NULL, 0); // 종료 카운트 attach
+	*exit_cnt = 0; // 종료 카운트 초기화
 	
 	unlink(SOCKET_NAME); // 서버 재실행시 오류를 방지하기 위해 만들어둔 소켓 삭제	
 		
@@ -188,9 +226,6 @@ int main() {
 	}
 			
 	while (1) {
-		if(exit_cnt == 10) // 종료 조건 처리 수요일에
-			break;
-		
 		if ((nsd = accept(sd, (struct sockaddr *)&cli, &clen)) == -1) { // client의 접속 요청 대기
 			perror("accept");
 			exit(1);
@@ -201,16 +236,17 @@ int main() {
 				perror("fork");
 				exit(1);
 			case 0:
-				send_msg(nsd, "⚡  번개나라에 오신 것을 환영합니다. ⚡\n\n\n");
-				item = (Data*) shmat(shmid, NULL, 0);
+				item = (Data*) shmat(shmid1, NULL, 0); // 구조체를 공유 메모리에 attach
+				exit_cnt = (int *) shmat(shmid2, NULL, 0);
+				send_msg(nsd, "⚡  번개나라에 오신 것을 환영합니다. ⚡");
 				select_item(nsd); // 사용자 물건 입력 받기
-				trade_or_exit(nsd);
-				shmdt(item);
+				trade_or_exit(nsd); // 거래가 가능한지 아닌지 확인
+
+				shmdt(item); // 공유 메모리 detach
+				shmdt(exit_cnt);
 				break;
 		}
 	}
-
-	shmctl(shmid, IPC_RMID, (struct shmid_ds *) NULL);
-	// data_save(); 수요일에 처리리
-	close(nsd);
+			
+	return 0;
 }
