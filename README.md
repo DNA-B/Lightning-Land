@@ -2,7 +2,9 @@
 
 Trading program by Linux socket communication
 
-##
+<br/><br/>
+
+## Project structure
 
 📦Lightning-Land
 ┣ 📂data
@@ -20,3 +22,11 @@ Trading program by Linux socket communication
 ┃ ┗ 📜server.c
 ┣ 📜Makefile
 ┗ 📜README.md
+
+<br/><br/>
+
+## Preview
+
+<br/><br/>
+
+## To improvements
