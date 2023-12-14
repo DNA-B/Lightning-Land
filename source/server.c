@@ -52,7 +52,7 @@ void exit_func(int nsd) {
 void send_msg(int nsd, char* msg) {
 	strcpy(buf, msg);
 	
-	if(send(nsd, buf, strlen(buf) + 1, 0) == -1) {
+	if(send(nsd, buf, strlen(buf) + 1, 0) == -1) { // client에 메세지 전달
 		perror("send");
 		exit(1);
 	}
@@ -62,7 +62,7 @@ void send_msg(int nsd, char* msg) {
 
 
 void receive_msg(int nsd) { 
-	if(recv(nsd, buf, sizeof(buf), 0) == -1) {
+	if(recv(nsd, buf, sizeof(buf), 0) == -1) { // client로부터 메세지 수신
 		perror("recv");
 		exit(1);
 	}
@@ -76,7 +76,7 @@ void select_item(int nsd) {
 	receive_msg(nsd); // client 선택 받기
 	
 	
-	while (atoi(buf) < 0 || atoi(buf) > 6) {
+	while (atoi(buf) < 0 || atoi(buf) > 6) { // 물건 번호의 범위를 벗어나면 재선택택
 		send_msg(nsd, "\n\n잘못 입력하셨습니다. 다시 선택해주세요.\n");
 		send_msg(nsd, "1");
 		receive_msg(nsd);
@@ -185,7 +185,7 @@ int main() {
 	shmid1 = shmget(key1, sizeof(int) * 1, IPC_CREAT | 0644); // exit_cnt 공유메모리 id
 	shmid2 = shmget(key2, sizeof(Data) * 10, IPC_CREAT | 0644); // item 공유메모리 id
 	
-	if (shmid1 == -1) {
+	if (shmid1 == -1) { // 공유 메모리 오류 메세지 출력력
 		perror("shmget");
 		exit(1);
 	}
@@ -202,30 +202,30 @@ int main() {
 	
 	unlink(SOCKET_NAME); // 서버 재실행시 오류를 방지하기 위해 만들어둔 소켓 삭제	
 		
-	if ((sd = socket(AF_UNIX, SOCK_STREAM, 0)) == -1) {
+	if ((sd = socket(AF_UNIX, SOCK_STREAM, 0)) == -1) { // 소켓 파일 기술자 생성
 		perror("socket");
 		exit(1);
  	}
 
  	printf("***** Server Start - Create Socket ***** \n");
 
-	memset((char *)&ser, '\0', sizeof(struct sockaddr_un));
+	memset((char *)&ser, '\0', sizeof(struct sockaddr_un)); // 소켓 주소 구조체를 초기화
 	ser.sun_family = AF_UNIX;
 	strcpy(ser.sun_path, SOCKET_NAME);
 	len = sizeof(ser.sun_family) + strlen(ser.sun_path);
 
-	if (bind(sd, (struct sockaddr *)&ser, len)) {
+	if (bind(sd, (struct sockaddr *)&ser, len)) { // 소켓 파일 기술자를 지정된 IP 주소/포트 번호와 결합
  		perror("bind");
 		exit(1);
 	}
 	
-	if (listen(sd, 10) < 0) {
+	if (listen(sd, 10) < 0) { // 클라이언트의 연결 요청 대기
 		perror("listen");
 		exit(1);
 	}
 			
 	while (1) {
-		if ((nsd = accept(sd, (struct sockaddr *)&cli, &clen)) == -1) { // client의 접속 요청 대기
+		if ((nsd = accept(sd, (struct sockaddr *)&cli, &clen)) == -1) { // 클라이언트의 연결 요청 수락
 			perror("accept");
 			exit(1);
 		}
@@ -235,8 +235,8 @@ int main() {
 				perror("fork");
 				exit(1);
 			case 0:
-				exit_cnt = (int *) shmat(shmid1, NULL, 0);
-				item = (Data*) shmat(shmid2, NULL, 0); // 구조체를 공유 메모리에 attach
+				exit_cnt = (int *) shmat(shmid1, NULL, 0); // 공유 메모리에 attach
+				item = (Data*) shmat(shmid2, NULL, 0); 
 				send_msg(nsd, "⚡  번개나라에 오신 것을 환영합니다. ⚡");
 				select_item(nsd); // 사용자 물건 입력 받기
 				trade_or_exit(nsd); // 거래가 가능한지 아닌지 확인
