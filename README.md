@@ -26,39 +26,39 @@
 <br/><br/>
 
 ## 🔎 Preview 🔍  
-1. **서버와 클라이언트 접속**  
+1. **Server and client connections**  
 ![image](https://github.com/DNA-B/Lightning-Land/assets/102334596/d1fcebe0-97ae-4926-b851-eff05d713448)  
 
-2. **1인 통신**  
+2. **single communication**  
   
-    2-1. 1인 통신시에 거래 성공 case  
+    2-1. Successful transaction case at the time of one person communication  
     ![image](https://github.com/DNA-B/Lightning-Land/assets/102334596/8e89059a-3672-43bd-87d0-efd3c9eec07e)  
 
-    2-2. 1인 통신시에 거래 실패 case  
+    2-2. Transaction failure case at the time of one person communication  
     ![image](https://github.com/DNA-B/Lightning-Land/assets/102334596/68968f5d-8222-4590-ba0d-ad4700956cc0)  
 
-    2-3. 이미 판매된 물건을 선택 → 다른 물건 구매를 원하지 않음 → 종료  
+    2-3. Select an item that has already been sold → Don't want to buy another item → Shut down  
     ![image](https://github.com/DNA-B/Lightning-Land/assets/102334596/0a79f40c-b9bf-4409-af22-e12c1ab97972)  
 
-    2-4. 엉뚱한 물건 번호를 고른 case  
+    2-4. Case of choosing the wrong item number  
     ![image](https://github.com/DNA-B/Lightning-Land/assets/102334596/91d67e4d-97c0-4db4-9975-9e0a3c5f686e)  
 
-3. **다인 통신**  
+3. **multiple communications**  
   
-    3-1. 다인 통신 시, 서로 다른 물건을 거래하는 case  
+    3-1. In multi-person communication, a case of trading different things  
     ![image](https://github.com/DNA-B/Lightning-Land/assets/102334596/d21b4a97-3f76-498a-8f6d-2d74245cb1d4)  
 
-    3-2. 다인 통신 시, 서로 같은 물건을 거래하는 case  
+    3-2. In multi-person communication, a case of trading the same thing  
     ![image](https://github.com/DNA-B/Lightning-Land/assets/102334596/fcf425c7-ad95-4aca-bde3-df1ea8ac493d)  
 
-    3-3. 다인 통신 시, 같은 물건을 골랐는데 구매자1(클라이언트1)이 거래에 실패해서 구매자2가 기다렸다가 거래에 성공한 case  
+    3-3. In the case of multi-person communication, the same item was selected, but Client 1 failed the transaction, so Client 2 waited and succeeded in the transaction  
     ![image](https://github.com/DNA-B/Lightning-Land/assets/102334596/7d43f5c2-907f-4b99-8639-c379fde5e441)  
 
-    3-4. 다인 통신 시, 구매자1과 구매자2가 같은 물건을 선택했을 경우, 구매자1의 거래가 완료될 때까지 구매자2가 거래를 대기하는 case  
+    3-4. In multi-person communication, if Client 1 and Client 2 select the same item, Client 2 waits for the transaction to be completed  
     ![image](https://github.com/DNA-B/Lightning-Land/assets/102334596/7a6598af-bf02-4775-bb8d-fc0a2eeca59d)  
     ![image](https://github.com/DNA-B/Lightning-Land/assets/102334596/17621619-e387-4509-9b0c-8afc8d0f8583)  
 
-4. **물건이 다 판매되었을 때**  
+4. **when the goods are sold out**  
 ![image](https://github.com/DNA-B/Lightning-Land/assets/102334596/4b38edd6-386f-41cc-bf64-f3b4a92750c7)  
 
 <br/><br/>
