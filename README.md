@@ -29,7 +29,7 @@
 1. **Server and client connections**  
   ![image](https://github.com/DNA-B/Lightning-Land/assets/102334596/d1fcebe0-97ae-4926-b851-eff05d713448)  
 
-<br/><br/>
+<br/>
 
 2. **single communication**
 
@@ -45,7 +45,7 @@
     2-4. Case of choosing the wrong item number  
        ![image](https://github.com/DNA-B/Lightning-Land/assets/102334596/91d67e4d-97c0-4db4-9975-9e0a3c5f686e)  
 
-<br/><br/>
+<br/>
 
 3. **multiple communications**  
   
@@ -62,7 +62,7 @@
         ![image](https://github.com/DNA-B/Lightning-Land/assets/102334596/7a6598af-bf02-4775-bb8d-fc0a2eeca59d)  
         ![image](https://github.com/DNA-B/Lightning-Land/assets/102334596/17621619-e387-4509-9b0c-8afc8d0f8583)  
 
-<br/><br/>
+<br/>
 
 4. **when the goods are sold out**  
   ![image](https://github.com/DNA-B/Lightning-Land/assets/102334596/4b38edd6-386f-41cc-bf64-f3b4a92750c7)  
