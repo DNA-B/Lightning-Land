@@ -1,10 +1,10 @@
-# Lightning-Land
+# ⚡ Lightning-Land ⚡
 ![image](https://github.com/DNA-B/Lightning-Land/assets/102334596/ae31bf99-bee5-4281-9366-2e4aec4e208d)  
-> Trading program by Linux socket communication
+> **Trading program by Linux socket communication**
 
 <br/><br/>
 
-## Project structure
+## 🗂 Project structure 🗂  
 
 📦Lightning-Land  
 ┣ 📂data  
@@ -25,7 +25,7 @@
 
 <br/><br/>
 
-## Preview  
+## 🔎 Preview 🔍  
 1. **서버와 클라이언트 접속**  
 ![image](https://github.com/DNA-B/Lightning-Land/assets/102334596/d1fcebe0-97ae-4926-b851-eff05d713448)  
 
@@ -63,7 +63,7 @@
 
 <br/><br/>
 
-## To improvements  
+## 📈 To improvements 📈  
 　The information on the item you want to sell is stored in a text file. Since the sale is carried out with a pre-stored file, you must enter the information of the item in the LL_data.txt file one by one in order to sell an item other than the stored item.  
 　Additionally, when it comes to the Nego system, when different buyers want to purchase the same item, the seller will want to make a deal with the one who offers the higher price between the two buyers, even if both are higher than the minimum amount.  
 　However, if buyer 1 who has already entered the transaction because that part was not implemented, the transaction succeeds and ends if the amount is simply higher than the minimum price. This remains a point of improvement.
