@@ -61,11 +61,13 @@
   <div>
     
 ```
-1. make all
-2. terminal on
-3. typing "./server"
-4. another terminal on
-5. typing "./client"
+make all
+
+# terminal on
+./server
+
+# nother terminal on
+./client
 ```
 
 </div>
