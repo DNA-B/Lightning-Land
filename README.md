@@ -58,7 +58,8 @@
 <br/><br/>
 
   <h2>🐞 Usage 🐞</h2>
-  
+  <div>
+    
 ```
 1. make all
 2. terminal on
@@ -66,6 +67,8 @@
 4. another terminal on
 5. typing "./client"
 ```
+
+</div>
     
   <h2>📈 To improvements 📈</h2>
     <div>
