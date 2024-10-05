@@ -58,14 +58,14 @@
 <br/><br/>
 
   <h2>🐞 Usage 🐞</h2>
-    <div>
-        <code>
-          1. make all
-          2. terminal on
-          3. typing "./server"
-          4. another terminal on
-          5. typing "./client"
-        </code>
+  
+```
+1. make all
+2. terminal on
+3. typing "./server"
+4. another terminal on
+5. typing "./client"
+```
     
   <h2>📈 To improvements 📈</h2>
     <div>
