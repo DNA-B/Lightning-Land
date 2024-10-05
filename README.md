@@ -59,19 +59,15 @@
 
   <h2>🐞 Usage 🐞</h2>
   <div>
-    
-```
-make all
+    <code>make all</code><br><br>
+    # terminal on<br>
+    <code>./server</code><br><br>
+    # another terminal on<br>
+    <code>./client</code>
+  </div>
 
-# terminal on
-./server
+<br><br>
 
-# nother terminal on
-./client
-```
-
-</div>
-    
   <h2>📈 To improvements 📈</h2>
     <div>
       The information on the item you want to sell is stored in a text file. Since the sale is carried out with a pre-stored file, you must enter the information of the item in the LL_data.txt file one by one in order to sell an item other than the stored item.  
