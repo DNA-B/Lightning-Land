@@ -38,7 +38,7 @@ int main() {
 	strcpy(ser.sun_path, SOCKET_NAME);
 	len = sizeof(ser.sun_family) + strlen(ser.sun_path);
 
-	if (connect(sd, (struct sockaddr *)&ser, len) < 0) { 클라이언트가 서버에 접속 요청
+	if (connect(sd, (struct sockaddr *)&ser, len) < 0) { // 클라이언트가 서버에 접속 요청
 		perror("bind");
 		exit(1);
 	}
