@@ -8,7 +8,26 @@
 <br/><br/>
 
   <h2>🗂 Project structure 🗂</h2>
-    <img src="https://github.com/user-attachments/assets/552a11e3-dc38-4c26-a049-53aace771380"><br>
+  <div align="left"> 
+    
+    📦 
+    ├─ Makefile
+    ├─ README.md
+    ├─ data
+    │  └─ LL_data.txt
+    ├─ header
+    │  ├─ data_init.h
+    │  └─ data_save.h
+    ├─ shmfile
+    │  ├─ data_shmfile
+    │  └─ exit_cnt_shmfile
+    └─ source
+       ├─ client.c
+       ├─ data_init.c
+       ├─ data_save.c
+       └─ server.c
+  </div>
+     
 
 <br/><br/>
 
