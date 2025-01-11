@@ -88,14 +88,14 @@ void select_item(int nsd) {
 
 
 void trade_or_exit(int nsd) {	
-	if(item[item_idx].is_trading) // 다른 client가 물건을 거래중이라면
+	if (item[item_idx].is_trading) // 다른 client가 물건을 거래중이라면
 		wait_trade(nsd);	
 	
-	if(item[item_idx].is_selled) { // 물건이 이미 팔렸다면
+	if (item[item_idx].is_selled) { // 물건이 이미 팔렸다면
 		send_msg(nsd, "\n\n⚠  해당 물건이 이미 판매되었습니다 ⚠\n");
 		sleep(2);
 		
-		if(re_trade(nsd)) // 다시 선택하거나 프로그램 종료
+		if (re_trade(nsd)) // 다시 선택하거나 프로그램 종료
 			trade_or_exit(nsd);
 		else
 			return;
